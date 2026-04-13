@@ -13,13 +13,13 @@
 #define TFT_DC 8
 #define TFT_CS 9
 
-// Additional pins for software SPI
+// Additional pins for software SPI on ESP32-S3-Touch-LCD-1.28
 #define TFT_MOSI 11
 #define TFT_MISO 12
 #define TFT_CLK 10
 #define TFT_RST 14
 
-// Additional pins for backlight control
+// Additional pins for backlight control on ESP32-S3-Touch-LCD-1.28
 #define TFT_BL 2
 #define TFT_PWM_CHANNEL 7 
 
@@ -34,7 +34,7 @@ const int TEXT_LINES[4][2] = {{30, 140}, {35, 160}, {44, 180}, {70, 200}};
 // Hardware SPI on Feather or other boards
 //Adafruit_GC9A01A tft(TFT_CS, TFT_DC);
 
-// Software SPI on Feather or other boards
+// Software SPI on ESP32-S3-Touch-LCD-1.28
 Adafruit_GC9A01A tft(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO);
 
 
@@ -140,7 +140,7 @@ void loop(void)
   writeRadarOn(70, 500, GC9A01A_ORANGE);
   Serial.println("Blink Radar On...");
   blinkRadarOn(200, 5000);
-  }
+}
 
 // Sequences
 //
