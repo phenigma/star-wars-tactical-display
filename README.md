@@ -1,0 +1,1 @@
+This utilizes the example https://www.youtube.com/watch?v=HzHRJd7rihE but alters it to function with the Waveshare ESP32-S3-Touch-LCD-1.28. Also creates a PlatformIO project from it for easier deployment.
