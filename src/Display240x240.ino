@@ -9,6 +9,10 @@
 #include "Adafruit_GC9A01A.h"
 #include "Aurebesh8pt7b.h"
 
+// Feature flags
+// Uncomment the following line to enable backlight control from an external microcontroller
+//#define ENABLE_BACKLIGHT_CONTROL
+
 // Display pins
 #define TFT_DC 8
 #define TFT_CS 9
@@ -22,6 +26,11 @@
 // Additional pins for backlight control on ESP32-S3-Touch-LCD-1.28
 #define TFT_BL 2
 #define TFT_PWM_CHANNEL 7 
+
+#ifdef ENABLE_BACKLIGHT_CONTROL
+#define BL_CONTROL_PIN 33  // Signal from external microcontroller
+volatile boolean backlightOn = true;
+#endif
 
 // Colors
 #define COLOR_TACTICAL_BLUE 0x004aff
@@ -120,13 +129,33 @@ void setup()
   tft.begin();
   clearScreen();
   tft.setRotation(0);
- 
+
+  // Initialize PWM for backlight control
   ledcSetup(TFT_PWM_CHANNEL, 5000, 8);
   ledcAttachPin(TFT_BL, TFT_PWM_CHANNEL);
+
+  // Turn the backlight on using PWM
+#ifndef ENABLE_BACKLIGHT_CONTROL
   ledcWrite(TFT_PWM_CHANNEL, 255);
+#endif
+
+#ifdef ENABLE_BACKLIGHT_CONTROL
+  // Backlight control from external microcontroller
+  pinMode(BL_CONTROL_PIN, INPUT);
+  attachInterrupt(digitalPinToInterrupt(BL_CONTROL_PIN), handleBacklightSignal, CHANGE);
+  handleBacklightSignal();  // Initialize backlight state based on current pin level
+#endif
 
   bootTacticalDisplay();
 }
+
+#ifdef ENABLE_BACKLIGHT_CONTROL
+// Interrupt handler for backlight signal from external microcontroller
+void IRAM_ATTR handleBacklightSignal() {
+  backlightOn = digitalRead(BL_CONTROL_PIN);
+  ledcWrite(TFT_PWM_CHANNEL, backlightOn ? 255 : 0);
+}
+#endif
 
 void loop(void)
 {
